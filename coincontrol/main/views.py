@@ -4,5 +4,8 @@ from coincontrol.main import main
 def dashboard():
     pass
 
+@main.route('/expenses', methods=["POST", "GET"])
+def expenses():
+    pass
 
 
