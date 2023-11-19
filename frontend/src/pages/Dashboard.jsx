@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useModal } from "../context/ModalContext";
 import axios from "axios";
+import AddIncome from "./AddIncome";
+import Transfer from "../components/Transfer";
+import Withdraw from "../components/Withdraw";
 
 const Dashboard = () => {
+  const { openModal, isModalOpen, closeModal } = useModal();
   const [incomeData, setIncomeData] = useState();
   const [budgetData, setBudgetData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeModal, setActiveModal] = useState("");
 
   const incomeUrl = `${import.meta.env.VITE_APP_URL}/income`;
   const budgetsUrl = `${import.meta.env.VITE_APP_URL}/budgets`;
@@ -21,9 +27,8 @@ const Dashboard = () => {
       })
       .then((incomeResponse) => {
         if (incomeResponse.status === 200) {
-          setIncomeData(incomeResponse.data.data.income)
+          setIncomeData(incomeResponse.data.data.income);
           setLoading(false);
-
         } else if (incomeResponse.status === 404) {
           console.log(false);
         } else {
@@ -34,7 +39,7 @@ const Dashboard = () => {
         console.error("Error fetching user store:", error);
       });
 
-      axios
+    axios
       .get(budgetsUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -43,9 +48,8 @@ const Dashboard = () => {
       })
       .then((budgetResponse) => {
         if (budgetResponse.status === 200) {
-          setBudgetData(budgetResponse.data.data.data)
+          setBudgetData(budgetResponse.data.data.data);
           setLoading(false);
-
         } else if (budgetResponse.status === 404) {
           console.log(false);
         } else {
@@ -54,9 +58,32 @@ const Dashboard = () => {
       })
       .catch((error) => {
         console.error("Error fetching user store:", error);
-      })
+      });
+  }, [incomeData]);
 
-  }, []);
+  const handleTopUp = () => {
+    if (activeModal === "AddIncome") return;
+    setActiveModal("AddIncome"); // Set active modal to transfer
+    openModal(<AddIncome />);
+  };
+
+  const handleTransfer = () => {
+    // Prevent opening the modal if the transfer modal is already open
+    if (activeModal === "Transfer") return;
+    setActiveModal("Transfer"); // Set active modal to transfer
+    openModal(<Transfer />);
+  };
+
+  const handleWithdraw = () => {
+    // Prevent opening the modal if the transfer modal is already open
+    if (activeModal === "Withdraw") return;
+    setActiveModal("Withdraw"); // Set active modal to transfer
+    openModal(<Withdraw />);
+  };
+  const handleModalClose = () => {
+    closeModal();
+    setActiveModal(""); // Reset active modal to none
+  };
 
   return (
     <div className="container mx-auto block md:flex flex-row  p-4 justify-between gap-10">
@@ -75,40 +102,50 @@ const Dashboard = () => {
             </h2>
             <span className="flex flex-row gap-5">
               {" "}
-              <Link to="income">
+              {/* <Link to="income">
                 {" "}
-                <h6 className="hover:text-[#EE6338]">Top up</h6>
-              </Link>
-              <Link to="comingsoon">
-                {" "}
-                <h6 className="hover:text-[#EE6338]">Transfer</h6>
-              </Link>
-              <Link to="comingsoon">
-                {" "}
-                <h6 className="hover:text-[#EE6338]">Withdraw</h6>
-              </Link>
+                <button onClick={handleIncomeModal} className="hover:text-[#EE6338]">Top up</button>
+              </Link> */}
+              <button onClick={handleTopUp} className="hover:text-[#EE6338]">
+                Top Up
+              </button>
+              {isModalOpen && activeModal === "AddIncome" && (
+                <AddIncome closeModal={handleModalClose} />
+              )}
+              <button onClick={handleTransfer} className="hover:text-[#EE6338]">
+                Transfer
+              </button>
+              {isModalOpen && activeModal === "Transfer" && (
+                <Transfer closeModal={handleModalClose} />
+              )}
+              <button onClick={handleWithdraw} className="hover:text-[#EE6338]">
+                Withdraw
+              </button>
+              {isModalOpen && activeModal === "Withdraw" && (
+                <Withdraw closeModal={handleModalClose} />
+              )}
             </span>
           </div>
           {/* Add appropriate components and styling here */}
         </section>
         <section className="p-6 rounded-md shadow-md mb-4">
-      <h2 className="text-2xl font-semibold mb-4">Budget</h2>
-      {loading && <p>Loading...</p>}
-      {/* {error && <p className="text-red-500">{error}</p>} */}
-      <div className="flex flex-col md:flex-row justify-start gap-5">
-        {Array.isArray(budgetData) && budgetData.length > 0 ? (
-          budgetData.map((budget) => (
-            <div className="rounded-md shadow-md p-2" key={budget.id}>
-              <h6 className="text-xl font-semibold mb-1">{budget.name}</h6>
-              <p className="font-semibold text-md">${budget.amount}</p>
-              <p>{budget.date_created}</p>
-            </div>
-          ))
-        ) : (
-          <p>No budget data available.</p>
-        )}
-      </div>
-    </section>
+          <h2 className="text-2xl font-semibold mb-4">Budget</h2>
+          {loading && <p>Loading...</p>}
+          {/* {error && <p className="text-red-500">{error}</p>} */}
+          <div className="flex flex-col md:flex-row justify-start gap-5">
+            {Array.isArray(budgetData) && budgetData.length > 0 ? (
+              budgetData.map((budget) => (
+                <div className="rounded-md shadow-md p-2" key={budget.id}>
+                  <h6 className="text-xl font-semibold mb-1">{budget.name}</h6>
+                  <p className="font-semibold text-md">${budget.amount}</p>
+                  <p>{budget.date_created}</p>
+                </div>
+              ))
+            ) : (
+              <p>No budget data available.</p>
+            )}
+          </div>
+        </section>
         <section className="p-6 rounded-md shadow-md mb-4">
           <h2 className="text-2xl font-semibold mb-4 text-[#EE6338]">
             Money Statistics

@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useModal } from "../context/ModalContext";
 
-const AddIncome = () => {
+import axios from "axios";
+import Modal from "../components/Modal";
+
+const AddIncome = ({closeModal}) => {
+  const { isModalOpen, openModal  } = useModal();
+
   const [amount, setAmount] = useState("");
   const navigate = useNavigate()
  
@@ -39,26 +44,26 @@ const AddIncome = () => {
   };
 
   return (
-    <div className="md:max-w-xl max-w-md bg-gray-300 p-5">
-      <p className="text-center font-bold text-2xl">Add Income</p>
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-5 py-5 text-xl">
-        <label>
-          Top Up Amount:
+    <Modal isOpen={isModalOpen} onClose={closeModal}>
+     <div className="bg-white p-6 rounded-md shadow-md">
+      <h2 className="text-xl font-semibold mb-4 text-[#EE6338]">Top Up Income</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-col">
+          <label htmlFor="amount" className="font-semibold text-gray-700">Amount:</label>
           <input
-            type="text"
+            id="amount"
+            type="number"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(event) => setAmount(event.target.value)}
             required
-            className="p-2 outline-none m-1"
+            className="w-full p-2 border border-gray-300 focus:outline-none"
           />
-        </label>
-       
-        <div >
-          {" "}
-          <button type="submit" className="bg-black p-2 text-white hover:bg-[#EE6338]">Top Up</button>
-        </div>{" "}
+        </div>
+
+        <button type="submit" className="bg-[#EE6338] text-white font-semibold p-2 rounded-md w-full">Top Up</button>
       </form>
     </div>
+    </Modal>
   );
 };
 
