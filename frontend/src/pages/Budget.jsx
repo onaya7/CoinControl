@@ -10,7 +10,7 @@ const Budget = () => {
     setBudgets([...budgets, newBudget]);
     //   setFormVisibility(false); // Hide the form after adding a budget
   };
-
+  
   return (
     <div>
       {/* <button onClick={() => setFormVisibility(!isFormVisible)}>

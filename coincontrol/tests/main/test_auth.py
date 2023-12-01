@@ -3,8 +3,7 @@ from coincontrol.extensions import db
 from coincontrol.models import Users
 from coincontrol import create_app
 from flask_jwt_extended import create_access_token
-from flask import session
-from coincontrol.token import generate_confirmation_token
+from coincontrol.tokens import generate_confirmation_token
 
 
 """

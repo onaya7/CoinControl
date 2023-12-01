@@ -1,7 +1,7 @@
 import requests
 import os
 import uuid
-from flask import make_response, current_app
+from flask import make_response
 
 
 

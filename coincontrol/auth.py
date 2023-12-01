@@ -6,7 +6,7 @@ from coincontrol.extensions import bcrypt
 from coincontrol.models import Users
 from coincontrol.extensions import db
 from flask_login import login_required, login_user, logout_user, current_user
-from coincontrol.token import generate_confirmation_token, check_confirm_token
+from coincontrol.tokens import generate_confirmation_token, check_confirm_token
 from datetime import datetime
 from coincontrol.email import (
     send_confirm_email,

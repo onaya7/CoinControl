@@ -20,7 +20,6 @@ def monitor(function=None):
 
     return wrapper
 
-
 # decorator that only allow the admin user to assess the routes
 def admin_required(function=None):
     @wraps(function)
